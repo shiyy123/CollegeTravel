@@ -16,7 +16,24 @@ import javax.persistence.*;
 @Entity
 @Table(name = "T_USER")
 public class User extends BaseEntity {
+    @Column(name = "F_STU_NUM")
+    private String stuNum;
+    @Column(name = "F_PHONE_NUM")
+    private String phoneNum;
+    @Column(name = "F_AVATAR_URL")
+    private String avatarURL;
+    @Column(name = "F_GENDER")
+    private String gender;
     @Column(name = "F_NICKNAME")
     private String nickName;
-    @Column(name = )
+    @Column(name = "F_CREDIT")
+    private Long credit;
+    @Column(name = "F_PASSWORD")
+    private String password;
+    @Column(name = "F_OPEN_ID")
+    private String openID;
+    @Column(name = "F_STATE")
+    private int state;
+    @Column(name = "F_OTHER")
+    private String other;
 }
