@@ -20,6 +20,8 @@ spring:
     open-in-view: false
 server:
   port: 8080
+swagger:
+  enable: true
 
 spring.session.store-type: none
 ---
