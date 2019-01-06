@@ -9,6 +9,6 @@ import lombok.Data;
 @Data
 public class UserVO {
     private String StuNum;
-    private String nickName;
-//    private String password;
+    private String phoneNum;
+    private String password;
 }

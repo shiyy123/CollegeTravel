@@ -27,12 +27,40 @@ public class UserController {
 
     @PostMapping(value = "signUp")
     public Message<UserVO> signUp(@RequestBody UserVO userVO) {
-        User user = user2UserVOWrapper.unwrapper(userVO);
-        user.setGender("1");
-        user = userService.save(user);
-        log.info(user.getId().toString());
+        User user = userService.ifExist(userVO.getStuNum());
+        if (user == null) {
+            user = user2UserVOWrapper.unwrapper(userVO);
+            user = userService.save(user);
+            log.info(user.getId().toString());
+            userVO = user2UserVOWrapper.wrapper(user);
+            return new Message<>(userVO, 200, "用户注册成功");
 
-        userVO = user2UserVOWrapper.wrapper(user);
-        return new Message<>(userVO, 200, "用户注册成功");
+        } else {
+            return new Message<>(userVO, 300, "用户已存在");
+        }
+    }
+
+    @PostMapping(value = "signIn")
+    public Message<UserVO> signIn(@RequestBody UserVO userVO) {
+        User user = userService.checkLogIn(userVO.getStuNum(), userVO.getPassword());
+        if (user == null) {
+            return new Message<>(userVO, 400, "用户名或密码错误");
+        } else {
+            userVO = user2UserVOWrapper.wrapper(user);
+            return new Message<>(userVO, 200, "登录成功");
+        }
+    }
+
+    @PostMapping(value = "modifyPwd")
+    public Message<UserVO> modifyPwd(@RequestBody UserVO userVO) {
+        User user = userService.ifExist(userVO.getStuNum());
+        if (user == null) {
+            return new Message<>(userVO, 500, "不存在此用户");
+        } else {
+            user = user2UserVOWrapper.unwrapper(userVO);
+            user = userService.save(user);
+            userVO = user2UserVOWrapper.wrapper(user);
+            return new Message<>(userVO, 200, "密码修改成功");
+        }
     }
 }

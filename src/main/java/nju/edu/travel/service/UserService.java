@@ -8,5 +8,6 @@ import nju.edu.travel.entity.User;
  */
 public interface UserService {
     User save(User user);
-    User ifExist(long userId);
+    User ifExist(String stuNum);
+    User checkLogIn(String stuNum, String password);
 }

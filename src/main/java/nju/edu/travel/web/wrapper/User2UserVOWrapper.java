@@ -1,6 +1,5 @@
 package nju.edu.travel.web.wrapper;
 
-import com.fasterxml.jackson.databind.util.BeanUtil;
 import nju.edu.travel.entity.User;
 import nju.edu.travel.web.vo.UserVO;
 import org.springframework.beans.BeanUtils;
@@ -21,7 +20,9 @@ public class User2UserVOWrapper {
 
     public User unwrapper(UserVO vo) {
         User user = new User();
-        BeanUtils.copyProperties(vo, user);
+        user.setStuNum(vo.getStuNum());
+        user.setPassword(vo.getPassword());
+        user.setPhoneNum(vo.getPhoneNum());
         return user;
     }
 }

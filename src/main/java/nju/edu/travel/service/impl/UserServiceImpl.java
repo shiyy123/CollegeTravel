@@ -25,9 +25,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User ifExist(long userId) {
-        return userRepository.findById(userId);
+    public User ifExist(String stuNum) {
+        return userRepository.findByStuNum(stuNum);
     }
 
-
+    @Override
+    public User checkLogIn(String stuNum, String password) {
+        return userRepository.findByStuNumAndPassword(stuNum, password);
+    }
 }
