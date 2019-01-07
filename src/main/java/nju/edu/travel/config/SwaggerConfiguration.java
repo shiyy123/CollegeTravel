@@ -35,7 +35,7 @@ public class SwaggerConfiguration {
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
                 .title("Travel API Doc")
-                .contact(new Contact("cary", "http://xueshu.baidu.com/scholarID/CN-BOFJ2HBK", "yangyangshi@smail.nju.edu.cn"))
+                .contact(new Contact("cary", "http://google.com/", "yangyangshi@smail.nju.edu.cn"))
                 .version("1.0")
                 .build();
     }

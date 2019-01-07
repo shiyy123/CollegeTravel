@@ -24,27 +24,3 @@ swagger:
   enable: true
 
 spring.session.store-type: none
----
-## others
-
-
-spring:
-  profiles: test
-  application:
-    name: travel
-  datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://192.168.0.4:3306/campusqa?useUnicode=yes&characterEncoding=UTF-8
-    username: root
-    password: Aesh8kie#j
-  jpa:
-    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
-    show-sql: true
-    hibernate:
-      ddl-auto: update
-    open-in-view: false
-server:
-  port: 9997
-
-
-spring.session.store-type: none

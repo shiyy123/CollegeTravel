@@ -26,14 +26,14 @@ public class User extends BaseEntity {
     private String gender;
     @Column(name = "F_NICKNAME")
     private String nickName;
-    @Column(name = "F_CREDIT")
-    private Long credit;
+    @Column(name = "F_CREDIT", columnDefinition = "INT default 0")
+    private int credit;
     @Column(name = "F_PASSWORD")
     private String password;
     @Column(name = "F_OPEN_ID")
     private String openID;
-    @Column(name = "F_STATE")
-    private int state;
+    @Column(name = "F_STATE", columnDefinition = "INT default 0")
+    private int state; //默认为0：非管理员,1：管理员
     @Column(name = "F_OTHER")
     private String other;
 }
