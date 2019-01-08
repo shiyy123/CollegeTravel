@@ -153,7 +153,46 @@ public class UserController {
             } else {
                 return new Message<>(null, 9000, "该用户已报名参加此活动");
             }
+        }
+    }
 
+    @PostMapping(value = "signFor/{activityId}")
+    public Message<UserEnrollActivityVO> signFor(@PathVariable("activityId") long activityId, @RequestBody UserVO userVO) {
+        Activity activity = activityService.ifExist(activityId);
+        if (activity == null) {
+            return new Message<>(null, 70000, "活动不存在");
+        } else {
+            UserEnrollActivity userEnrollActivity = userEnrollActivityService.ifExist(activityId, userVO.getStuNum());
+            if (userEnrollActivity == null) {
+                return new Message<>(null, 10000, "用户未报名此活动");
+            } else {
+                userEnrollActivity.setRegisterBefore(1);
+                userEnrollActivity = userEnrollActivityService.save(userEnrollActivity);
+                UserEnrollActivityVO userEnrollActivityVO = userEnrollActivity2UserEnrollActivityVOWrapper.wrapper(userEnrollActivity);
+                return new Message<>(userEnrollActivityVO, 200, "签到成功");
+            }
+        }
+    }
+
+    @PostMapping(value = "signOut/{activityId}")
+    public Message<UserEnrollActivityVO> signOut(@PathVariable("activityId") long activityId, @RequestBody UserVO userVO) {
+        Activity activity = activityService.ifExist(activityId);
+        if (activity == null) {
+            return new Message<>(null, 70000, "活动不存在");
+        } else {
+            UserEnrollActivity userEnrollActivity = userEnrollActivityService.ifExist(activityId, userVO.getStuNum());
+            if (userEnrollActivity == null) {
+                return new Message<>(null, 10000, "用户未报名此活动");
+            } else {
+                if (userEnrollActivity.getRegisterBefore() == 0) {
+                    return new Message<>(null, 11000, "用户未签到");
+                } else {
+                    userEnrollActivity.setRegisterAfter(1);
+                    userEnrollActivity = userEnrollActivityService.save(userEnrollActivity);
+                    UserEnrollActivityVO userEnrollActivityVO = userEnrollActivity2UserEnrollActivityVOWrapper.wrapper(userEnrollActivity);
+                    return new Message<>(userEnrollActivityVO, 200, "签退成功");
+                }
+            }
         }
     }
 }
