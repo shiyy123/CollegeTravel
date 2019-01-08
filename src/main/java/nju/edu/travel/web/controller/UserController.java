@@ -2,16 +2,15 @@ package nju.edu.travel.web.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import nju.edu.travel.entity.Activity;
+import nju.edu.travel.entity.Comment;
 import nju.edu.travel.entity.User;
 import nju.edu.travel.entity.UserEnrollActivity;
 import nju.edu.travel.service.ActivityService;
+import nju.edu.travel.service.CommentService;
 import nju.edu.travel.service.UserEnrollActivityService;
 import nju.edu.travel.service.UserService;
 import nju.edu.travel.web.vo.*;
-import nju.edu.travel.web.wrapper.Activity2ActivityVOWrapper;
-import nju.edu.travel.web.wrapper.User2UserInfoVOWrapper;
-import nju.edu.travel.web.wrapper.User2UserVOWrapper;
-import nju.edu.travel.web.wrapper.UserEnrollActivity2UserEnrollActivityVOWrapper;
+import nju.edu.travel.web.wrapper.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -39,7 +38,12 @@ public class UserController {
     UserEnrollActivityService userEnrollActivityService;
     @Autowired
     UserEnrollActivity2UserEnrollActivityVOWrapper userEnrollActivity2UserEnrollActivityVOWrapper;
+    @Autowired
+    Comment2CommentVOWrapper comment2CommentVOWrapper;
+    @Autowired
+    CommentService commentService;
 
+    //注册
     @PostMapping(value = "signUp")
     public Message<UserVO> signUp(@RequestBody UserVO userVO) {
         User user = userService.ifExist(userVO.getStuNum());
@@ -55,6 +59,7 @@ public class UserController {
         }
     }
 
+    //登录
     @PostMapping(value = "signIn")
     public Message<UserVO> signIn(@RequestBody UserVO userVO) {
         User user = userService.checkLogIn(userVO.getStuNum(), userVO.getPassword());
@@ -66,6 +71,7 @@ public class UserController {
         }
     }
 
+    //更新密码
     @PostMapping(value = "updatePwd")
     public Message<UserVO> updatePwd(@RequestBody UserVO userVO) {
         User user = userService.ifExist(userVO.getStuNum());
@@ -79,7 +85,8 @@ public class UserController {
         }
     }
 
-    @GetMapping(value = "info/{stuNum}")
+    //查看个人信息
+    @GetMapping(value = "userInfo/{stuNum}")
     public Message<UserInfoVO> getUserInfo(@PathVariable("stuNum") String stuNum) {
         User user = userService.ifExist(stuNum);
         if (user == null) {
@@ -90,12 +97,14 @@ public class UserController {
         }
     }
 
+    //更新个人信息
     @PostMapping(value = "updateUserInfo")
     public Message<UserInfoVO> updateUserInfo(@RequestBody UserInfoVO userInfoVO) {
         userInfoVO = user2UserInfoVOWrapper.wrapper(userService.updateUserInfo(userInfoVO));
         return new Message<>(userInfoVO, 200, "修改个人信息成功");
     }
 
+    //创建活动
     @PostMapping(value = "createActivity/{stuNum}")
     public Message<ActivityVO> createActivity(@PathVariable("stuNum") String stuNum, @RequestBody ActivityVO activityVO) {
         User user = userService.ifExist(stuNum);
@@ -114,6 +123,7 @@ public class UserController {
         }
     }
 
+    //报名活动
     @PostMapping(value = "registerActivity/{activityId}")
     public Message<UserEnrollActivityVO> registerActivity(@PathVariable("activityId") long activityId, @RequestBody UserVO userVO) {
         Activity activity = activityService.ifExist(activityId);
@@ -156,6 +166,7 @@ public class UserController {
         }
     }
 
+    //签到
     @PostMapping(value = "signFor/{activityId}")
     public Message<UserEnrollActivityVO> signFor(@PathVariable("activityId") long activityId, @RequestBody UserVO userVO) {
         Activity activity = activityService.ifExist(activityId);
@@ -174,6 +185,7 @@ public class UserController {
         }
     }
 
+    //签退
     @PostMapping(value = "signOut/{activityId}")
     public Message<UserEnrollActivityVO> signOut(@PathVariable("activityId") long activityId, @RequestBody UserVO userVO) {
         Activity activity = activityService.ifExist(activityId);
@@ -192,6 +204,29 @@ public class UserController {
                     UserEnrollActivityVO userEnrollActivityVO = userEnrollActivity2UserEnrollActivityVOWrapper.wrapper(userEnrollActivity);
                     return new Message<>(userEnrollActivityVO, 200, "签退成功");
                 }
+            }
+        }
+    }
+
+    //评论
+    @PostMapping(value = "makeComment")
+    public Message<CommentVO> makeComment(@RequestBody CommentVO commentVO) {
+        Activity activity = activityService.ifExist(commentVO.getActivityID());
+        if (activity == null) {
+            return new Message<>(null, 70000, "活动不存在");
+        } else {
+            UserEnrollActivity userEnrollActivity = userEnrollActivityService.ifExist(commentVO.getActivityID(), commentVO.getStuNum());
+            if (userEnrollActivity == null) {
+                return new Message<>(null, 10000, "用户未报名此活动");
+            } else if (userEnrollActivity.getRegisterBefore() == 0 || userEnrollActivity.getRegisterAfter() == 0) {
+                return new Message<>(null, 10000, "用户未成功签到或签退");
+            } else {
+                Comment comment = comment2CommentVOWrapper.unwrapper(commentVO);
+                log.info(comment.toString());
+                comment = commentService.save(comment);
+
+                commentVO = comment2CommentVOWrapper.wrapper(comment);
+                return new Message<>(commentVO, 200, "评论成功");
             }
         }
     }
