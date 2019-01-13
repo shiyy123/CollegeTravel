@@ -3,6 +3,7 @@ package nju.edu.travel.entity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.joda.time.DateTime;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -19,7 +20,7 @@ import java.util.Date;
 @EqualsAndHashCode(callSuper = true)
 @Table(name = "T_ACTIVITY")
 @NoArgsConstructor
-public class Activity extends BaseEntity{
+public class Activity extends BaseEntity {
     @Column(name = "F_STU_NUM")
     private String stuNum;
     @Column(name = "F_TITLE")
@@ -55,4 +56,17 @@ public class Activity extends BaseEntity{
 
     @Column(name = "F_OTHER")
     private String other;
+
+    public DateTime getStartTime() {
+        return null == startTime ? null : new DateTime(startTime);
+    }
+
+    public DateTime getEndTime() {
+        return null == endTime ? null : new DateTime(endTime);
+    }
+
+    public DateTime getEnrollEndTime() {
+        return null == enrollEndTime ? null : new DateTime(enrollEndTime);
+    }
+
 }

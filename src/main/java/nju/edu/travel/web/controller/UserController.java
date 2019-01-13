@@ -110,12 +110,17 @@ public class UserController {
         User user = userService.ifExist(stuNum);
         if (user == null) {
             return new Message<>(null, 5000, "不存在此用户");
-        } else if (activityVO.getStartTime().after(activityVO.getEndTime())) {
-            return new Message<>(null, 6000, "开始时间应小于结束时间");
-        } else if (activityVO.getEnrollEndTime().after(activityVO.getStartTime())) {
-            return new Message<>(null, 6000, "报名截止时间应小于开始时间");
-        } else {
+        }
+//        else {
+//
+//        }if (activityVO.getStartTime().after(activityVO.getEndTime())) {
+//            return new Message<>(null, 6000, "开始时间应小于结束时间");
+//        } else if (activityVO.getEnrollEndTime().after(activityVO.getStartTime())) {
+//            return new Message<>(null, 6000, "报名截止时间应小于开始时间");
+//        }
+        else {
             Activity activity = activity2ActivityVOWrapper.unwrapper(activityVO);
+            log.info(activity.getStartTime().toString("yyyy-MM-dd HH:mm:ss"));
             activity.setStuNum(stuNum);
             activity = activityService.save(activity);
             activityVO = activity2ActivityVOWrapper.wrapper(activity);
@@ -140,9 +145,9 @@ public class UserController {
                     return new Message<>(null, 8000, "人数达到上限，无法报名");
                 }
                 Date curDate = new Date();
-                if (curDate.after(activity.getEnrollEndTime())) {
-                    return new Message<>(null, 8000, "超过报名截止时间，无法报名");
-                }
+//                if (curDate.after(activity.getEnrollEndTime())) {
+//                    return new Message<>(null, 8000, "超过报名截止时间，无法报名");
+//                }
 
                 // register num + 1
                 activity.setPersonNumCur(personNumCur + 1);

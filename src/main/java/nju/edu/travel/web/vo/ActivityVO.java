@@ -2,8 +2,6 @@ package nju.edu.travel.web.vo;
 
 import lombok.Data;
 
-import java.util.Date;
-
 
 /**
  * Created by Cary on 19-1-7
@@ -14,9 +12,9 @@ public class ActivityVO {
     private Long id;
     private String stuNum;
     private String title;
-    private Date startTime;
-    private Date endTime;
-    private Date enrollEndTime;
+    private String startTime;
+    private String endTime;
+    private String enrollEndTime;
     private String location;
     private String introduction;
     private Long personNumLimit;
