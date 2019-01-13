@@ -230,4 +230,15 @@ public class UserController {
             }
         }
     }
+
+    @GetMapping(value = "getActivityInfo/{stuNum}/{activityId}")
+    public Message<UserEnrollActivityVO> getActivityInfo(@PathVariable("stuNum") String stuNum, @PathVariable("activityId") Long activityId) {
+        UserEnrollActivity userEnrollActivity = userEnrollActivityService.ifExist(activityId, stuNum);
+        if (userEnrollActivity == null) {
+            return new Message<>(null, 200, "用户未报名该活动");
+        } else {
+            UserEnrollActivityVO userEnrollActivityVO = userEnrollActivity2UserEnrollActivityVOWrapper.wrapper(userEnrollActivity);
+            return new Message<>(userEnrollActivityVO, 200, "用户参与该活动的状态");
+        }
+    }
 }
