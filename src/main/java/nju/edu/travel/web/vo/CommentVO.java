@@ -8,6 +8,7 @@ import lombok.Data;
  */
 @Data
 public class CommentVO {
+    private Long id;
     private String stuNum;
     private Long activityID;
     private String commentInfo;

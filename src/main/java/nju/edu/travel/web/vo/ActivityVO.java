@@ -11,6 +11,7 @@ import java.util.Date;
  */
 @Data
 public class ActivityVO {
+    private Long id;
     private String stuNum;
     private String title;
     private Date startTime;
