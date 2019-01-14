@@ -14,6 +14,9 @@ import nju.edu.travel.web.wrapper.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
@@ -107,25 +110,29 @@ public class UserController {
     //创建活动
     @PostMapping(value = "createActivity/{stuNum}")
     public Message<ActivityVO> createActivity(@PathVariable("stuNum") String stuNum, @RequestBody ActivityVO activityVO) {
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         User user = userService.ifExist(stuNum);
         if (user == null) {
             return new Message<>(null, 5000, "不存在此用户");
+        } else {
+            try {
+                if (dateFormat.parse(activityVO.getStartTime()).after(dateFormat.parse(activityVO.getEndTime()))) {
+                    return new Message<>(null, 6000, "开始时间应小于结束时间");
+                } else if (dateFormat.parse(activityVO.getEnrollEndTime()).after(dateFormat.parse(activityVO.getStartTime()))) {
+                    return new Message<>(null, 6000, "报名截止时间应小于开始时间");
+                } else {
+                    Activity activity = activity2ActivityVOWrapper.unwrapper(activityVO);
+                    log.info(activity.getStartTime().toString("yyyy-MM-dd HH:mm:ss"));
+                    activity.setStuNum(stuNum);
+                    activity = activityService.save(activity);
+                    activityVO = activity2ActivityVOWrapper.wrapper(activity);
+                    return new Message<>(activityVO, 200, "活动创建成功");
+                }
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
         }
-//        else {
-//
-//        }if (activityVO.getStartTime().after(activityVO.getEndTime())) {
-//            return new Message<>(null, 6000, "开始时间应小于结束时间");
-//        } else if (activityVO.getEnrollEndTime().after(activityVO.getStartTime())) {
-//            return new Message<>(null, 6000, "报名截止时间应小于开始时间");
-//        }
-        else {
-            Activity activity = activity2ActivityVOWrapper.unwrapper(activityVO);
-            log.info(activity.getStartTime().toString("yyyy-MM-dd HH:mm:ss"));
-            activity.setStuNum(stuNum);
-            activity = activityService.save(activity);
-            activityVO = activity2ActivityVOWrapper.wrapper(activity);
-            return new Message<>(activityVO, 200, "活动创建成功");
-        }
+        return new Message<>(null, 5000, "创建活动失败");
     }
 
     //报名活动
@@ -145,9 +152,10 @@ public class UserController {
                     return new Message<>(null, 8000, "人数达到上限，无法报名");
                 }
                 Date curDate = new Date();
-//                if (curDate.after(activity.getEnrollEndTime())) {
-//                    return new Message<>(null, 8000, "超过报名截止时间，无法报名");
-//                }
+
+                if (curDate.after(activity.getEnrollEndTime().toDate())) {
+                    return new Message<>(null, 8000, "超过报名截止时间，无法报名");
+                }
 
                 // register num + 1
                 activity.setPersonNumCur(personNumCur + 1);
