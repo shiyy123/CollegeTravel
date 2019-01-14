@@ -1,6 +1,7 @@
 package nju.edu.travel.web.controller;
 
 import lombok.extern.slf4j.Slf4j;
+import nju.edu.travel.constant.Constant;
 import nju.edu.travel.entity.Activity;
 import nju.edu.travel.entity.Comment;
 import nju.edu.travel.entity.User;
@@ -11,9 +12,13 @@ import nju.edu.travel.service.UserEnrollActivityService;
 import nju.edu.travel.service.UserService;
 import nju.edu.travel.web.vo.*;
 import nju.edu.travel.web.wrapper.*;
+import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -52,8 +57,19 @@ public class UserController {
         User user = userService.ifExist(userVO.getStuNum());
         if (user == null) {
             user = user2UserVOWrapper.unwrapper(userVO);
+
+            File imageDir = new File(Constant.IMAGE_BASE.concat(user.getStuNum()));
+            if(!imageDir.exists()){
+                imageDir.mkdir();
+            }
+
+            try {
+                FileUtils.copyFile(new File(Constant.IMAGE_BASE.concat("default.jpeg")), new File(imageDir.getAbsolutePath().concat("default.jpeg")));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
             user = userService.save(user);
-            log.info(user.getId().toString());
             userVO = user2UserVOWrapper.wrapper(user);
             return new Message<>(userVO, 200, "用户注册成功");
 
@@ -254,4 +270,10 @@ public class UserController {
             return new Message<>(userEnrollActivityVO, 200, "用户参与该活动的状态");
         }
     }
+
+
+//    @PostMapping(value = "updateAvatar/{stuNum}")
+//    public Message<UserInfoVO> updateAvatar(@RequestBody MultipartFile multipartFile, @PathVariable("stuNum") String stuNum){
+//
+//    }
 }

@@ -5,6 +5,7 @@ import nju.edu.travel.entity.Activity;
 import nju.edu.travel.service.ActivityService;
 import nju.edu.travel.web.vo.ActivityVO;
 import nju.edu.travel.web.vo.Message;
+import nju.edu.travel.web.vo.UserInfoVO;
 import nju.edu.travel.web.wrapper.Activity2ActivityVOWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
