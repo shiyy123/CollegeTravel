@@ -45,9 +45,6 @@ public class Activity extends BaseEntity {
     @Column(name = "F_PERSON_NUM_CUR", columnDefinition = "INT default 0")
     private Long personNumCur;//当前报名人数
 
-    @Column(name = "F_STATE", columnDefinition = "INT default 0")
-    private int state;//0：活动初始状态，1：活动进行中，2：活动已结束
-
     @Column(name = "F_CREDIT")
     private Long credit;
 

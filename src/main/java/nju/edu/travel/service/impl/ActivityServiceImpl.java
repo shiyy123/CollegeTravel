@@ -8,12 +8,12 @@ import nju.edu.travel.service.ActivityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -51,13 +51,23 @@ public class ActivityServiceImpl implements ActivityService {
     }
 
     @Override
-    public Page<Activity> getActivityListPageableByState(int state, int page, int size) {
+    public Page<Activity> getActivityListPageableByState(int page, int size, int state) {
         Sort sort = new Sort(Sort.Direction.DESC, "id");
-        return activityRepository.findByState(state, PageRequest.of(page, size, sort));
+        Date cur = new Date();
+        if (state == 0) {
+            return activityRepository.findByEnrollEndTimeAfter(cur, PageRequest.of(page, size, sort));
+        } else if (state == 1) {
+            return activityRepository.findByEnrollEndTimeBeforeAndStartTimeAfter(cur, cur, PageRequest.of(page, size, sort));
+        } else if (state == 2) {
+            return activityRepository.findByStartTimeBeforeAndEndTimeAfter(cur, cur, PageRequest.of(page, size, sort));
+        } else if (state == 3) {
+            return activityRepository.findByEndTimeBefore(cur, PageRequest.of(page, size, sort));
+        }
+        return null;
     }
 
     @Override
-    public Page<Activity> getActivityListPageableByStuNumAndState(String stuNum, int state, int page, int size) {
+    public Page<Activity> getActivityListPageableByStuNumAndState(String stuNum, int page, int size, int state) {
         // 获取该用户所有报名的活动
         List<UserEnrollActivity> userEnrollActivityList = userEnrollActivityRepository.findByStuNum(stuNum);
         List<Long> activityIds = new ArrayList<>();
@@ -66,6 +76,16 @@ public class ActivityServiceImpl implements ActivityService {
         }
         //根据Activity表中的状态，分为未开始、进行中、已结束
         Sort sort = new Sort(Sort.Direction.DESC, "id");
-        return activityRepository.findById(activityIds, PageRequest.of(page, size, sort));
+        Date cur = new Date();
+        if (state == 0) {
+            return activityRepository.findByIdAndEnrollEndTimeAfter(activityIds, cur, PageRequest.of(page, size, sort));
+        } else if (state == 1) {
+            return activityRepository.findByIdAndEnrollEndTimeBeforeAndStartTimeAfter(activityIds, cur, cur, PageRequest.of(page, size, sort));
+        } else if (state == 2) {
+            return activityRepository.findByIdAndStartTimeBeforeAndEndTimeAfter(activityIds, cur, cur, PageRequest.of(page, size, sort));
+        } else if (state == 3) {
+            return activityRepository.findByIdAndEndTimeBefore(activityIds, cur, PageRequest.of(page, size, sort));
+        }
+        return null;
     }
 }

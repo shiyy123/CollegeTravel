@@ -50,23 +50,38 @@ public class ActivityController {
         return new Message<>(activityVOPage, 200, "查询成功");
     }
 
-    @GetMapping(value = "activityNotStarted/{page}/{size}")
-    public Message<Page<ActivityVO>> getActivityNotStarted(@PathVariable("page") int page, @PathVariable("size") int size) {
-        Page<Activity> activityPage = activityService.getActivityListPageableByState(0, page, size);
+    //获取三种状态的活动，返回给前端state字段在wrapper函数中处理
+    private Message<Page<ActivityVO>> getPageMessage(int page, int size, int state) {
+        Page<Activity> activityPage = activityService.getActivityListPageableByState(page, size, state);
         Page<ActivityVO> activityVOPage = activityPage.map(x -> activity2ActivityVOWrapper.wrapper(x));
         return new Message<>(activityVOPage, 200, "查询成功");
+    }
+
+    @GetMapping(value = "activityRegistering/{page}/{size}")
+    public Message<Page<ActivityVO>> getActivityRegistering(@PathVariable("page") int page, @PathVariable("size") int size) {
+        return getPageMessage(page, size, 0);
+    }
+
+    @GetMapping(value = "activityNotStarted/{page}/{size}")
+    public Message<Page<ActivityVO>> getActivityNotStarted(@PathVariable("page") int page, @PathVariable("size") int size) {
+        return getPageMessage(page, size, 1);
     }
 
     @GetMapping(value = "activityOnGoing/{page}/{size}")
     public Message<Page<ActivityVO>> getActivityOnGoing(@PathVariable("page") int page, @PathVariable("size") int size) {
-        Page<Activity> activityPage = activityService.getActivityListPageableByState(1, page, size);
-        Page<ActivityVO> activityVOPage = activityPage.map(x -> activity2ActivityVOWrapper.wrapper(x));
-        return new Message<>(activityVOPage, 200, "查询成功");
+        return getPageMessage(page, size, 2);
     }
 
     @GetMapping(value = "activityCompleted/{page}/{size}")
     public Message<Page<ActivityVO>> getActivityCompleted(@PathVariable("page") int page, @PathVariable("size") int size) {
-        Page<Activity> activityPage = activityService.getActivityListPageableByState(2, page, size);
+        return getPageMessage(page, size, 3);
+    }
+
+    @GetMapping(value = "{stuNum}/activityRegisteringByStuNum/{page}/{size}")
+    public Message<Page<ActivityVO>> getActivityRegisteringByStuNum(@PathVariable("stuNum") String stuNum,
+                                                                   @PathVariable("page") int page,
+                                                                   @PathVariable("size") int size) {
+        Page<Activity> activityPage = activityService.getActivityListPageableByStuNumAndState(stuNum, page, size, 0);
         Page<ActivityVO> activityVOPage = activityPage.map(x -> activity2ActivityVOWrapper.wrapper(x));
         return new Message<>(activityVOPage, 200, "查询成功");
     }
@@ -75,7 +90,7 @@ public class ActivityController {
     public Message<Page<ActivityVO>> getActivityNotStartedByStuNum(@PathVariable("stuNum") String stuNum,
                                                                    @PathVariable("page") int page,
                                                                    @PathVariable("size") int size) {
-        Page<Activity> activityPage = activityService.getActivityListPageableByStuNumAndState(stuNum, 0, page, size);
+        Page<Activity> activityPage = activityService.getActivityListPageableByStuNumAndState(stuNum, page, size, 1);
         Page<ActivityVO> activityVOPage = activityPage.map(x -> activity2ActivityVOWrapper.wrapper(x));
         return new Message<>(activityVOPage, 200, "查询成功");
     }
@@ -84,16 +99,16 @@ public class ActivityController {
     public Message<Page<ActivityVO>> getActivityOnGoingByStuNum(@PathVariable("stuNum") String stuNum,
                                                                 @PathVariable("page") int page,
                                                                 @PathVariable("size") int size) {
-        Page<Activity> activityPage = activityService.getActivityListPageableByStuNumAndState(stuNum, 1, page, size);
+        Page<Activity> activityPage = activityService.getActivityListPageableByStuNumAndState(stuNum, page, size, 2);
         Page<ActivityVO> activityVOPage = activityPage.map(x -> activity2ActivityVOWrapper.wrapper(x));
         return new Message<>(activityVOPage, 200, "查询成功");
     }
 
     @GetMapping(value = "{stuNum}/activityCompletedByStuNum/{page}/{size}")
     public Message<Page<ActivityVO>> getActivityCompletedByStuNum(@PathVariable("stuNum") String stuNum,
-                                                                @PathVariable("page") int page,
-                                                                @PathVariable("size") int size) {
-        Page<Activity> activityPage = activityService.getActivityListPageableByStuNumAndState(stuNum, 2, page, size);
+                                                                  @PathVariable("page") int page,
+                                                                  @PathVariable("size") int size) {
+        Page<Activity> activityPage = activityService.getActivityListPageableByStuNumAndState(stuNum, page, size, 3);
         Page<ActivityVO> activityVOPage = activityPage.map(x -> activity2ActivityVOWrapper.wrapper(x));
         return new Message<>(activityVOPage, 200, "查询成功");
     }

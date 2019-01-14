@@ -32,6 +32,8 @@ public class User extends BaseEntity {
     private String password;
     @Column(name = "F_OPEN_ID")
     private String openID;
+    @Column(name = "F_INTRODUCTION")
+    private String introduction;
     @Column(name = "F_STATE", columnDefinition = "INT default 0")
     private int state; //默认为0：非管理员,1：管理员
     @Column(name = "F_OTHER")

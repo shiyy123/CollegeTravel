@@ -16,7 +16,7 @@ public interface ActivityService {
 
     Page<Activity> getActivityListPageableByTitleOrIntroduction(String title, String introduction, int page, int size);
 
-    Page<Activity> getActivityListPageableByState(int state, int page, int size);
+    Page<Activity> getActivityListPageableByState(int page, int size, int state);
 
-    Page<Activity> getActivityListPageableByStuNumAndState(String stuNum, int state, int page, int size);
+    Page<Activity> getActivityListPageableByStuNumAndState(String stuNum, int page, int size, int state);
 }

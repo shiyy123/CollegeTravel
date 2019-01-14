@@ -15,6 +15,24 @@ import java.text.SimpleDateFormat;
  */
 @Service
 public class Activity2ActivityVOWrapper {
+    public int getState(Activity activity) {
+        int state = -1;
+        if (activity.getEnrollEndTime().isAfterNow()) {
+            state = 0;
+        }
+        if (activity.getEnrollEndTime().isBeforeNow() && activity.getStartTime().isAfterNow()) {
+            state = 1;
+        }
+        if (activity.getStartTime().isBeforeNow() && activity.getEndTime().isAfterNow()) {
+            state = 2;
+        }
+        if (activity.getEndTime().isBeforeNow()) {
+            state = 3;
+        }
+
+        return state;
+    }
+
     public ActivityVO wrapper(Activity activity) {
         ActivityVO activityVO = new ActivityVO();
         BeanUtils.copyProperties(activity, activityVO);
@@ -22,6 +40,8 @@ public class Activity2ActivityVOWrapper {
         activityVO.setStartTime(activity.getStartTime().toString("yyyy-MM-dd HH:mm:ss"));
         activityVO.setEndTime(activity.getEndTime().toString("yyyy-MM-dd HH:mm:ss"));
         activityVO.setEnrollEndTime(activity.getEnrollEndTime().toString("yyyy-MM-dd HH:mm:ss"));
+
+        activityVO.setState(getState(activity));
 
         return activityVO;
     }
