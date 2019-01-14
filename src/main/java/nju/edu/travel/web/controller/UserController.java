@@ -27,6 +27,8 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by Cary on 19-1-3
@@ -60,9 +62,18 @@ public class UserController {
     //注册
     @PostMapping(value = "signUp")
     public Message<UserVO> signUp(@RequestBody UserVO userVO) {
-        User user = userService.ifExist(userVO.getStuNum());
+        User user = userService.ifExist(userVO.getStuNum().toLowerCase());
         if (user == null) {
+            Pattern pattern = Pattern.compile("^[1][0-9]{10}$");
+            Matcher matcher = pattern.matcher(userVO.getPhoneNum());
+            if(!matcher.find()){
+                return new Message<>(null, 3000, "手机号应为1开头的11位数字");
+            }
+
             user = user2UserVOWrapper.unwrapper(userVO);
+
+            //学号转换为小写，不区分大小写
+            user.setStuNum(user.getStuNum().toLowerCase());
 
             File imageDir = new File(Constant.IMAGE_BASE.concat(user.getStuNum()));
             if (!imageDir.exists()) {
@@ -312,4 +323,5 @@ public class UserController {
         }
         return new Message<>(null, 6000, "更新头像失败");
     }
+
 }
