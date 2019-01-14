@@ -19,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -59,15 +60,17 @@ public class UserController {
             user = user2UserVOWrapper.unwrapper(userVO);
 
             File imageDir = new File(Constant.IMAGE_BASE.concat(user.getStuNum()));
-            if(!imageDir.exists()){
+            if (!imageDir.exists()) {
                 imageDir.mkdir();
             }
 
             try {
-                FileUtils.copyFile(new File(Constant.IMAGE_BASE.concat("default.jpeg")), new File(imageDir.getAbsolutePath().concat("default.jpeg")));
+                FileUtils.copyFile(new File(Constant.IMAGE_BASE.concat("default.jpeg")), new File(imageDir.getAbsolutePath().concat(File.separator).concat("avatar.jpeg")));
             } catch (IOException e) {
                 e.printStackTrace();
             }
+            //设置头像url
+            user.setAvatarURL(imageDir.getAbsolutePath().concat(File.separator).concat("avatar.jpeg"));
 
             user = userService.save(user);
             userVO = user2UserVOWrapper.wrapper(user);
@@ -272,8 +275,36 @@ public class UserController {
     }
 
 
-//    @PostMapping(value = "updateAvatar/{stuNum}")
-//    public Message<UserInfoVO> updateAvatar(@RequestBody MultipartFile multipartFile, @PathVariable("stuNum") String stuNum){
-//
-//    }
+    //更新头像
+    @PostMapping(value = "updateAvatar/{stuNum}")
+    public Message<UserInfoVO> updateAvatar(@RequestBody MultipartFile multipartFile, @PathVariable("stuNum") String stuNum) {
+        try {
+            User user = userService.ifExist(stuNum);
+            if (user == null) {
+                return new Message<>(null, 5000, "用户不存在");
+            } else {
+                if (multipartFile == null) {
+                    return new Message<>(null, 6000, "更新头像失败");
+                }
+
+                //删除上一个头像
+                String avatarDir = Constant.IMAGE_BASE.concat(user.getStuNum());
+                FileUtils.deleteDirectory(new File(avatarDir));
+                new File(avatarDir).mkdirs();
+
+                File avatarImage = new File(avatarDir.concat(File.separator).concat(multipartFile.getOriginalFilename()));
+                multipartFile.transferTo(avatarImage);
+
+                user.setAvatarURL(avatarImage.getAbsolutePath());
+                user = userService.save(user);
+
+                UserInfoVO userInfoVO = user2UserInfoVOWrapper.wrapper(user);
+
+                return new Message<>(userInfoVO, 200, "更新头像成功");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return new Message<>(null, 6000, "更新头像失败");
+    }
 }
