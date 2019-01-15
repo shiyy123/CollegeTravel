@@ -16,6 +16,7 @@ import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -66,7 +67,7 @@ public class UserController {
         if (user == null) {
             Pattern pattern = Pattern.compile("^[1][0-9]{10}$");
             Matcher matcher = pattern.matcher(userVO.getPhoneNum());
-            if(!matcher.find()){
+            if (!matcher.find()) {
                 return new Message<>(null, 3000, "手机号应为1开头的11位数字");
             }
 
@@ -324,4 +325,65 @@ public class UserController {
         return new Message<>(null, 6000, "更新头像失败");
     }
 
+    //查询我组织的活动
+    @GetMapping(value = "myOrganizeActivity/{stuNum}/{page}/{size}")
+    public Message<Page<ActivityVO>> getMyOrganizeActivity(@PathVariable("stuNum") String stuNum,
+                                                           @PathVariable("page") int page,
+                                                           @PathVariable("size") int size) {
+        Page<Activity> activityPage = activityService.getActivityListPageableByOrganizeStuNum(stuNum, page, size);
+        Page<ActivityVO> activityVOPage = activityPage.map(x -> activity2ActivityVOWrapper.wrapper(x));
+        return new Message<>(activityVOPage, 200, "查询成功");
+    }
+
+    //组织者查询自己创建的活动中的所有报名人员
+    @GetMapping(value = "myOrganizeActivityEnrollPerson/{activityId}/{page}/{size}")
+    public Message<Page<UserEnrollActivityVO>> getMyOrganizeActivityEnrollPerson(@PathVariable("activityId") long activityId,
+                                                                                 @PathVariable("page") int page,
+                                                                                 @PathVariable("size") int size) {
+        Page<UserEnrollActivity> userEnrollActivityPage = userEnrollActivityService.getUserEnrollActivityListPageableByActivityId(activityId, page, size);
+        Page<UserEnrollActivityVO> userEnrollActivityVOPage = userEnrollActivityPage.map(x -> userEnrollActivity2UserEnrollActivityVOWrapper.wrapper(x));
+        return new Message<>(userEnrollActivityVOPage, 200, "查询成功");
+    }
+
+    //组织者按checkState查询自己创建的活动中的所有报名人员
+    @GetMapping(value = "myOrganizeActivityEnrollPersonByCheckState/{activityId}/{checkState}/{page}/{size}")
+    public Message<Page<UserEnrollActivityVO>> getMyOrganizeActivityEnrollPersonByCheckState(@PathVariable("activityId") long activityId,
+                                                                                             @PathVariable("checkState") int checkState,
+                                                                                             @PathVariable("page") int page,
+                                                                                             @PathVariable("size") int size) {
+        Page<UserEnrollActivity> userEnrollActivityPage = userEnrollActivityService.getUserEnrollActivityListPageableByActivityIdAndCheckState(activityId, checkState, page, size);
+        Page<UserEnrollActivityVO> userEnrollActivityVOPage = userEnrollActivityPage.map(x -> userEnrollActivity2UserEnrollActivityVOWrapper.wrapper(x));
+        return new Message<>(userEnrollActivityVOPage, 200, "查询成功");
+    }
+
+    //组织者审核报名人员
+    @PostMapping(value = "checkRegisterStudent/{activityId}/{stuNum}/{checkState}")
+    public Message<UserEnrollActivityVO> checkRegisterStudent(@PathVariable("activityId") long activityId,
+                                                              @PathVariable("stuNum") String stuNum,
+                                                              @PathVariable("checkState") int checkState) {
+        UserEnrollActivity userEnrollActivity = userEnrollActivityService.ifExist(activityId, stuNum);
+        if (userEnrollActivity == null) {
+            return new Message<>(null, 3000, "用户未报名参加此活动");
+        } else {
+            if (checkState == 0 || checkState == -1 || checkState == 1) {
+                if (userEnrollActivity.getCheckState() != -1 && checkState == -1) {
+                    Activity activity = activityService.ifExist(activityId);
+                    activity.setPersonNumCur(activity.getPersonNumCur() <= 0 ? 0 : activity.getPersonNumCur() - 1);
+                    activityService.save(activity);
+                }
+                if (userEnrollActivity.getCheckState() == -1 && checkState == 1) {
+                    Activity activity = activityService.ifExist(activityId);
+                    activity.setPersonNumCur(activity.getPersonNumCur() < activity.getPersonNumLimit() ? activity.getPersonNumCur() + 1 : activity.getPersonNumLimit());
+                    activityService.save(activity);
+                }
+
+                userEnrollActivity.setCheckState(checkState);
+                userEnrollActivity = userEnrollActivityService.save(userEnrollActivity);
+                UserEnrollActivityVO userEnrollActivityVO = userEnrollActivity2UserEnrollActivityVOWrapper.wrapper(userEnrollActivity);
+                return new Message<>(userEnrollActivityVO, 200, "更新状态成功");
+            } else {
+                return new Message<>(null, 4000, "设定状态应为-1,0,1");
+            }
+        }
+    }
 }

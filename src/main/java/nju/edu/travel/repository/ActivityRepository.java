@@ -50,4 +50,6 @@ public interface ActivityRepository extends CrudRepository<Activity, Long> {
     Page<Activity> findByIdAndEndTimeBefore(List<Long> ids, Date dateTime, Pageable pageable);
 
     List<Activity> findAll();
+
+    Page<Activity> findByStuNum(String stuNum, Pageable pageable);
 }

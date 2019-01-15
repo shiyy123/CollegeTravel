@@ -88,4 +88,10 @@ public class ActivityServiceImpl implements ActivityService {
         }
         return null;
     }
+
+    @Override
+    public Page<Activity> getActivityListPageableByOrganizeStuNum(String stuNum, int page, int size) {
+        Sort sort = new Sort(Sort.Direction.DESC, "id");
+        return activityRepository.findByStuNum(stuNum, PageRequest.of(page, size, sort));
+    }
 }
