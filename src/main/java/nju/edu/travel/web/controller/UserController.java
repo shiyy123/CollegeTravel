@@ -159,6 +159,12 @@ public class UserController {
                 } else {
                     Activity activity = activity2ActivityVOWrapper.unwrapper(activityVO);
                     log.info(activity.getStartTime().toString("yyyy-MM-dd HH:mm:ss"));
+                    Pattern pattern = Pattern.compile("^[1][0-9]{10}$");
+                    Matcher matcher = pattern.matcher(activity.getResponsiblePersonPhoneNum());
+                    if (!matcher.find()) {
+                        return new Message<>(null, 3000, "手机号应为1开头的11位数字");
+                    }
+
                     activity.setStuNum(stuNum);
                     activity = activityService.save(activity);
                     activityVO = activity2ActivityVOWrapper.wrapper(activity);
