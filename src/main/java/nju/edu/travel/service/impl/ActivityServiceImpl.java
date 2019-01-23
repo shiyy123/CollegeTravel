@@ -8,6 +8,7 @@ import nju.edu.travel.service.ActivityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -91,7 +92,13 @@ public class ActivityServiceImpl implements ActivityService {
 
     @Override
     public Page<Activity> getActivityListPageableByOrganizeStuNum(String stuNum, int page, int size) {
-        Sort sort = new Sort(Sort.Direction.DESC, "id");
+        Sort sort = new Sort(Sort.Direction.ASC, "id");
         return activityRepository.findByStuNum(stuNum, PageRequest.of(page, size, sort));
+    }
+
+    @Override
+    public Page<UserEnrollActivity> getActivityListPageableByStuNum(String stuNum, int page, int size) {
+        Sort sort = new Sort(Sort.Direction.ASC, "id");
+        return userEnrollActivityRepository.findByStuNum(stuNum, PageRequest.of(page, size, sort));
     }
 }

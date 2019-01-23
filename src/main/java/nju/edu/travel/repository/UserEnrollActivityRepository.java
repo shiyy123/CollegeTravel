@@ -25,4 +25,6 @@ public interface UserEnrollActivityRepository extends CrudRepository<UserEnrollA
     @Modifying
     @Query("update #{#entityName} r set r.checkState = ?2 where r.id = ?1")
     void updateUserEnrollActivityBy(long id, int state);
+
+    Page<UserEnrollActivity> findByStuNum(String stuNum, Pageable pageable);
 }

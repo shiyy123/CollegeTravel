@@ -2,14 +2,19 @@ package nju.edu.travel.web.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import nju.edu.travel.entity.Activity;
+import nju.edu.travel.entity.UserEnrollActivity;
 import nju.edu.travel.service.ActivityService;
 import nju.edu.travel.web.vo.ActivityVO;
 import nju.edu.travel.web.vo.Message;
-import nju.edu.travel.web.vo.UserInfoVO;
+import nju.edu.travel.web.vo.UserEnrollActivityVO;
 import nju.edu.travel.web.wrapper.Activity2ActivityVOWrapper;
+import nju.edu.travel.web.wrapper.UserEnrollActivity2UserEnrollActivityVOWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * Created by Cary on 19-1-8
@@ -23,6 +28,8 @@ public class ActivityController {
     ActivityService activityService;
     @Autowired
     Activity2ActivityVOWrapper activity2ActivityVOWrapper;
+    @Autowired
+    UserEnrollActivity2UserEnrollActivityVOWrapper userEnrollActivity2UserEnrollActivityVOWrapper;
 
     @GetMapping(value = "list/{page}/{size}")
     public Message<Page<ActivityVO>> listActivity(@PathVariable("page") int page, @PathVariable("size") int size) {
@@ -80,8 +87,8 @@ public class ActivityController {
 
     @GetMapping(value = "{stuNum}/activityRegisteringByStuNum/{page}/{size}")
     public Message<Page<ActivityVO>> getActivityRegisteringByStuNum(@PathVariable("stuNum") String stuNum,
-                                                                   @PathVariable("page") int page,
-                                                                   @PathVariable("size") int size) {
+                                                                    @PathVariable("page") int page,
+                                                                    @PathVariable("size") int size) {
         Page<Activity> activityPage = activityService.getActivityListPageableByStuNumAndState(stuNum, page, size, 0);
         Page<ActivityVO> activityVOPage = activityPage.map(x -> activity2ActivityVOWrapper.wrapper(x));
         return new Message<>(activityVOPage, 200, "查询成功");
@@ -112,5 +119,14 @@ public class ActivityController {
         Page<Activity> activityPage = activityService.getActivityListPageableByStuNumAndState(stuNum, page, size, 3);
         Page<ActivityVO> activityVOPage = activityPage.map(x -> activity2ActivityVOWrapper.wrapper(x));
         return new Message<>(activityVOPage, 200, "查询成功");
+    }
+
+    @GetMapping(value = "{stuNum}/activitiesByStuNum/{page}/{size}")
+    public Message<Page<UserEnrollActivityVO>> getActivitiesByStuNum(@PathVariable("stuNum") String stuNum,
+                                                           @PathVariable("page") int page,
+                                                           @PathVariable("size") int size) {
+        Page<UserEnrollActivity> userEnrollActivityPage = activityService.getActivityListPageableByStuNum(stuNum, page, size);
+        Page<UserEnrollActivityVO> userEnrollActivityVOPage = userEnrollActivityPage.map(x -> userEnrollActivity2UserEnrollActivityVOWrapper.wrapper(x));
+        return new Message<>(userEnrollActivityVOPage, 200, "查询成功");
     }
 }

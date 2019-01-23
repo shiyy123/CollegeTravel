@@ -1,6 +1,7 @@
 package nju.edu.travel.service;
 
 import nju.edu.travel.entity.Activity;
+import nju.edu.travel.entity.UserEnrollActivity;
 import org.springframework.data.domain.Page;
 
 /**
@@ -21,4 +22,6 @@ public interface ActivityService {
     Page<Activity> getActivityListPageableByStuNumAndState(String stuNum, int page, int size, int state);
 
     Page<Activity> getActivityListPageableByOrganizeStuNum(String stuNum, int page, int size);
+
+    Page<UserEnrollActivity> getActivityListPageableByStuNum(String stuNum, int page, int size);
 }
