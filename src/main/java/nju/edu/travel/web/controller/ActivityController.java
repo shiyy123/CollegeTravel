@@ -121,6 +121,7 @@ public class ActivityController {
         return new Message<>(activityVOPage, 200, "查询成功");
     }
 
+    //test jenkins
     @GetMapping(value = "{stuNum}/activitiesByStuNum/{page}/{size}")
     public Message<Page<UserEnrollActivityVO>> getActivitiesByStuNum(@PathVariable("stuNum") String stuNum,
                                                            @PathVariable("page") int page,
