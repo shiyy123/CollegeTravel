@@ -25,6 +25,9 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.LogRecord;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -57,6 +60,7 @@ public class UserController {
     @Autowired
     ResourceLoader resourceLoader;
 
+    private Logger logger = Logger.getLogger("user controller");
     //注册
     @PostMapping(value = "signUp")
     public Message<UserVO> signUp(@RequestBody UserVO userVO) {
@@ -81,7 +85,8 @@ public class UserController {
             try {
                 FileUtils.copyFile(new File(Constant.IMAGE_BASE.concat("default.jpeg")), new File(imageDir.getAbsolutePath().concat(File.separator).concat("avatar.jpeg")));
             } catch (IOException e) {
-                System.err.println("sign up fail");
+                LogRecord lr = new LogRecord(Level.INFO, "sign up fail");
+                logger.log(lr);
                 e.printStackTrace();
             }
             //设置头像url
@@ -169,7 +174,8 @@ public class UserController {
                     return new Message<>(activityVO, 200, "活动创建成功");
                 }
             } catch (ParseException e) {
-                System.err.println("create activity fail");
+                LogRecord lr = new LogRecord(Level.INFO, "create activity fail");
+                logger.log(lr);
                 e.printStackTrace();
             }
         }
@@ -325,7 +331,8 @@ public class UserController {
                 return new Message<>(userInfoVO, 200, "更新头像成功");
             }
         } catch (IOException e) {
-            System.err.println("update avatar fail");
+            LogRecord lr = new LogRecord(Level.INFO, "update avatar fail");
+            logger.log(lr);
             e.printStackTrace();
         }
         return new Message<>(null, 6000, "更新头像失败");

@@ -8,6 +8,9 @@ import org.springframework.stereotype.Service;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.logging.Level;
+import java.util.logging.LogRecord;
+import java.util.logging.Logger;
 
 /**
  * Created by Cary on 19-1-7
@@ -46,6 +49,8 @@ public class Activity2ActivityVOWrapper {
         return activityVO;
     }
 
+    private Logger logger = Logger.getLogger("wrapper");
+
     public Activity unwrapper(ActivityVO activityVO) {
         Activity activity = new Activity();
         BeanUtils.copyProperties(activityVO, activity);
@@ -56,7 +61,8 @@ public class Activity2ActivityVOWrapper {
             activity.setEndTime(dateFormat.parse(activityVO.getEndTime()));
             activity.setEnrollEndTime(dateFormat.parse(activityVO.getEnrollEndTime()));
         } catch (ParseException e) {
-            System.err.println("unwrap fail");
+            LogRecord lr = new LogRecord(Level.INFO, "unwrap fail.");
+            logger.log(lr);
             e.printStackTrace();
         }
         return activity;
