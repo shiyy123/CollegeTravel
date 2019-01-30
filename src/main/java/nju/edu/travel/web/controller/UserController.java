@@ -81,6 +81,7 @@ public class UserController {
             try {
                 FileUtils.copyFile(new File(Constant.IMAGE_BASE.concat("default.jpeg")), new File(imageDir.getAbsolutePath().concat(File.separator).concat("avatar.jpeg")));
             } catch (IOException e) {
+                System.err.println("sign up fail");
                 e.printStackTrace();
             }
             //设置头像url
@@ -168,6 +169,7 @@ public class UserController {
                     return new Message<>(activityVO, 200, "活动创建成功");
                 }
             } catch (ParseException e) {
+                System.err.println("create activity fail");
                 e.printStackTrace();
             }
         }
@@ -323,6 +325,7 @@ public class UserController {
                 return new Message<>(userInfoVO, 200, "更新头像成功");
             }
         } catch (IOException e) {
+            System.err.println("update avatar fail");
             e.printStackTrace();
         }
         return new Message<>(null, 6000, "更新头像失败");

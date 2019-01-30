@@ -56,6 +56,7 @@ public class Activity2ActivityVOWrapper {
             activity.setEndTime(dateFormat.parse(activityVO.getEndTime()));
             activity.setEnrollEndTime(dateFormat.parse(activityVO.getEnrollEndTime()));
         } catch (ParseException e) {
+            System.err.println("unwrap fail");
             e.printStackTrace();
         }
         return activity;
