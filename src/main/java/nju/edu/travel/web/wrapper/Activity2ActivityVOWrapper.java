@@ -49,8 +49,6 @@ public class Activity2ActivityVOWrapper {
         return activityVO;
     }
 
-    private Logger logger = Logger.getLogger("wrapper");
-
     public Activity unwrapper(ActivityVO activityVO) {
         Activity activity = new Activity();
         BeanUtils.copyProperties(activityVO, activity);
@@ -61,6 +59,7 @@ public class Activity2ActivityVOWrapper {
             activity.setEndTime(dateFormat.parse(activityVO.getEndTime()));
             activity.setEnrollEndTime(dateFormat.parse(activityVO.getEnrollEndTime()));
         } catch (ParseException e) {
+            Logger logger = Logger.getLogger("wrapper");
             LogRecord lr = new LogRecord(Level.INFO, "unwrap fail.");
             logger.log(lr);
             e.printStackTrace();
