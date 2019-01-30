@@ -5,7 +5,5 @@ package nju.edu.travel.constant;
  * Email: yangyangshi@smail.nju.edu.cn
  */
 public class Constant {
-    public static final String ANOYMOUS_NAME = "匿名";
     public static final String IMAGE_BASE = "/home/cary/images/";
-    public static final String DEFAULT_INDIVIDUAL = "这儿应该写简介";
 }

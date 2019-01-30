@@ -1,6 +1,5 @@
 package nju.edu.travel.service.impl;
 
-import lombok.Setter;
 import nju.edu.travel.entity.User;
 import nju.edu.travel.repository.UserRepository;
 import nju.edu.travel.service.UserService;

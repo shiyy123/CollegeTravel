@@ -8,5 +8,4 @@ import org.springframework.data.repository.CrudRepository;
  * Email: yangyangshi@smail.nju.edu.cn
  */
 public interface CommentRepository extends CrudRepository<Comment, Long> {
-    Comment findById(long Id);
 }

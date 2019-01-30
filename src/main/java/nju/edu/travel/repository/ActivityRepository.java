@@ -1,10 +1,8 @@
 package nju.edu.travel.repository;
 
 import nju.edu.travel.entity.Activity;
-import org.joda.time.DateTime;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
